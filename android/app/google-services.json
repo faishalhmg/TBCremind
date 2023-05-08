@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "15724884705",
+    "firebase_url": "https://tbc-remind-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "tbc-remind-app",
+    "storage_bucket": "tbc-remind-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15724884705:android:aae350604dd0d7c5a4fda0",
+        "android_client_info": {
+          "package_name": "com.example.tbc_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15724884705-dg45bi7e9r68ja33qk9m770asnunrho5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkp2SXSNMJf2QbwcSvPxTGcBRkcY6BHjM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15724884705-925sgb4mvgu5k5e85ra1i9m34ra46f7n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
