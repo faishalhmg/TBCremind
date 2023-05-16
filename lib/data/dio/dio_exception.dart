@@ -18,8 +18,10 @@ class DioException implements Exception {
         errorMessage = 'Request send timeout.';
         break;
       case DioErrorType.badResponse:
-        errorMessage = _handleStatusCode(dioError.response?.statusCode);
+        errorMessage = _handleStatusCode(
+            dioError.response?.statusCode, dioError.response?.data);
         break;
+
       case DioErrorType.connectionError:
         if (dioError.message!.contains('SocketException')) {
           errorMessage = 'No Internet.';
@@ -33,7 +35,7 @@ class DioException implements Exception {
     }
   }
 
-  String _handleStatusCode(int? statusCode) {
+  String _handleStatusCode(int? statusCode, dynamic error) {
     switch (statusCode) {
       case 400:
         return 'Bad request.';
@@ -42,9 +44,11 @@ class DioException implements Exception {
       case 403:
         return 'The authenticated user is not allowed to access the specified API endpoint.';
       case 404:
-        return 'The requested resource does not exist.';
+        return error['errorMessage'];
       case 405:
         return 'Method not allowed. Please check the Allow header for the allowed HTTP methods.';
+      case 409:
+        return error['errorMessage'];
       case 415:
         return 'Unsupported media type. The requested content type or version number is invalid.';
       case 422:
@@ -53,6 +57,8 @@ class DioException implements Exception {
         return 'Too many requests.';
       case 500:
         return 'Internal server error.';
+      case 502:
+        return 'Bad gateway';
       default:
         return 'Oops something went wrong!';
     }

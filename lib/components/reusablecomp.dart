@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
 TextField reusableTextField(String text, IconData icon, bool isPasswordType,
-    TextEditingController controller) {
+    TextEditingController controller, String hint) {
   return TextField(
     controller: controller,
     obscureText: isPasswordType,
@@ -15,6 +15,7 @@ TextField reusableTextField(String text, IconData icon, bool isPasswordType,
         icon,
         color: Colors.white70,
       ),
+      hintText: hint,
       labelText: text,
       labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
       filled: true,
@@ -42,14 +43,14 @@ TextField reusableTextField1(String text, TextEditingController controller) {
   );
 }
 
-Container firebaseUIButton(BuildContext context, String title, Function onTap) {
+Container ButtonAction(BuildContext context, String title, Function onTap) {
   return Container(
     width: MediaQuery.of(context).size.width,
     height: 50,
     margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
     child: ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         onTap();
       },
       child: Text(

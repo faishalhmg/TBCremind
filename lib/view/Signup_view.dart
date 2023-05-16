@@ -1,12 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tbc_app/components/reusablecomp.dart';
+import 'package:tbc_app/data/Models/user/user.dart';
+import 'package:tbc_app/data/dio/DioClient.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({Key? key, required this.dioClient}) : super(key: key);
+  final DioClient dioClient;
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -19,6 +20,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _passwordagainTextController = TextEditingController();
   TextEditingController _nikTextController = TextEditingController();
   TextEditingController _namaTextController = TextEditingController();
+
+  bool isLoading = false;
+  User? createdUser;
+  String? error;
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +40,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(color: AppColors.appBarColor),
+          decoration: const BoxDecoration(color: AppColors.appBarColor),
           child: SingleChildScrollView(
               child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 120, 20, 0),
+            padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
             child: Column(
               children: <Widget>[
                 Image.asset(
@@ -51,47 +56,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 20,
                 ),
                 reusableTextField("Masukan Email", Icons.person_outline, false,
-                    _emailTextController),
+                    _emailTextController, 'Email'),
                 const SizedBox(
                   height: 20,
                 ),
                 reusableTextField("Masukan NIK", Icons.person_outline, false,
-                    _nikTextController),
+                    _nikTextController, 'NIK'),
                 const SizedBox(
                   height: 20,
                 ),
                 reusableTextField("Masukan Nama", Icons.person_outline, false,
-                    _namaTextController),
+                    _namaTextController, 'Nama'),
                 const SizedBox(
                   height: 20,
                 ),
                 reusableTextField("Enter UserName", Icons.person_outline, false,
-                    _userNameTextController),
+                    _userNameTextController, 'UserName'),
                 const SizedBox(
                   height: 20,
                 ),
                 reusableTextField("Masukan Kata sandi", Icons.lock_outlined,
-                    true, _passwordTextController),
+                    true, _passwordTextController, 'Password'),
                 const SizedBox(
                   height: 20,
                 ),
                 reusableTextField("Ulang Kata sandi", Icons.lock_outlined, true,
-                    _passwordagainTextController),
+                    _passwordagainTextController, 'Confirm Password'),
                 const SizedBox(
                   height: 20,
                 ),
-                firebaseUIButton(context, "Sign Up", () {
-                  FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
-                          email: _emailTextController.text,
-                          password: _passwordTextController.text)
-                      .then((value) {
-                    print("Created New Account");
-                    context.go('/home');
-                  }).onError((error, stackTrace) {
-                    print("Error ${error.toString()}");
-                  });
-                })
+                ButtonAction(context, "Daftar", () async {
+                  setState(() => isLoading = true);
+                  final user = User(
+                      nama: _namaTextController.text,
+                      username: _userNameTextController.text,
+                      email: _emailTextController.text,
+                      nik: _nikTextController.text,
+                      password: _passwordTextController.text,
+                      confirm_password: _passwordagainTextController.text);
+                  try {
+                    final responseUser =
+                        await widget.dioClient.createUser(user: user);
+                    setState(() => createdUser = responseUser);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        duration: Duration(seconds: 5),
+                        content: Text('Registrasi berhasil silahkan login')));
+                    context.go('/login');
+                  } catch (err) {
+                    setState(() =>
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          duration: const Duration(seconds: 3),
+                          content: Text(' data tidak sesuai ketentuan'),
+                        )));
+                  }
+                  setState(() => isLoading = false);
+                }),
               ],
             ),
           ))),

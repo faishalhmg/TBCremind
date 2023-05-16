@@ -1,11 +1,13 @@
+// ignore_for_file: file_names, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:tbc_app/data/buttonMenuMap.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
 class EfekObat extends StatelessWidget {
-  const EfekObat({super.key});
+  const EfekObat({
+    super.key,
+  });
 
   Widget CardViewEfekObat() {
     return Card(
@@ -20,7 +22,7 @@ class EfekObat extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Text(
                   'Catatan 1',
                   style: TextStyle(fontSize: 40),
@@ -33,7 +35,7 @@ class EfekObat extends StatelessWidget {
                   'Pemakaian Terakhir',
                   style: TextStyle(fontSize: 20),
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 10,
                 ),
               ],
@@ -44,13 +46,13 @@ class EfekObat extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   color: AppColors.buttonColor,
                   iconSize: 35,
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   color: AppColors.buttonColor,
                   iconSize: 35,
                 ),
@@ -68,15 +70,15 @@ class EfekObat extends StatelessWidget {
       appBar: AppBar(
         title: Text(menuDetails[4]['title']),
         backgroundColor: AppColors.appBarColor,
-        iconTheme: IconThemeData(color: AppColors.buttonIconColor),
+        iconTheme: const IconThemeData(color: AppColors.buttonIconColor),
         actions: <Widget>[
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
+              padding: const EdgeInsets.only(right: 20.0),
               child: GestureDetector(
                 onTap: () {
                   // context.go('/notification');
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.lock_clock_rounded,
                   size: 26.0,
                   color: AppColors.appBarIconColor,
@@ -86,10 +88,10 @@ class EfekObat extends StatelessWidget {
       ),
       backgroundColor: AppColors.pageBackground,
       body: ListView(
-        padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+        padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
         children: [
           CardViewEfekObat(),
-          Divider(
+          const Divider(
             indent: 10,
             endIndent: 10,
           )

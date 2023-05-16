@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:tbc_app/data/buttonMenuMap.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
@@ -63,15 +62,15 @@ class EdukasiTBC extends StatelessWidget {
       appBar: AppBar(
         title: Text(menuDetails[5]['title']),
         backgroundColor: AppColors.appBarColor,
-        iconTheme: IconThemeData(color: AppColors.buttonIconColor),
+        iconTheme: const IconThemeData(color: AppColors.buttonIconColor),
         actions: <Widget>[
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
+              padding: const EdgeInsets.only(right: 20.0),
               child: GestureDetector(
                 onTap: () {
                   // context.go('/notification');
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.lock_clock_rounded,
                   size: 26.0,
                   color: AppColors.appBarIconColor,
@@ -86,7 +85,7 @@ class EdukasiTBC extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
             child: CardViewEdukasi(),
           ),
-          Divider(
+          const Divider(
             indent: 10,
             endIndent: 10,
           )

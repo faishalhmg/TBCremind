@@ -7,21 +7,22 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-      id: json['id'] as int,
+      id: json['id'] as int?,
       nama: json['nama'] as String,
       username: json['username'] as String,
       email: json['email'] as String,
       nik: json['nik'] as String,
       password: json['password'] as String,
-      alamat: json['alamat'] as String,
-      usia: json['usia'] as String,
-      no_hp: json['no_hp'] as String,
-      goldar: json['goldar'] as String,
-      bb: json['bb'] as String,
-      kaderTB: json['kaderTB'] as String,
-      pmo: json['pmo'] as String,
-      pet_kesehatan: json['pet_kesehatan'] as String,
-      jk: json['jk'] as String,
+      confirm_password: json['confirm_password'] as String,
+      alamat: json['alamat'] as String?,
+      usia: json['usia'] as String?,
+      no_hp: json['no_hp'] as String?,
+      goldar: json['goldar'] as String?,
+      bb: json['bb'] as String?,
+      kaderTB: json['kaderTB'] as String?,
+      pmo: json['pmo'] as String?,
+      pet_kesehatan: json['pet_kesehatan'] as String?,
+      jk: json['jk'] as String?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -31,6 +32,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'email': instance.email,
       'nik': instance.nik,
       'password': instance.password,
+      'confirm_password': instance.confirm_password,
       'alamat': instance.alamat,
       'usia': instance.usia,
       'no_hp': instance.no_hp,

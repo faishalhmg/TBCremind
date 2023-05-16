@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:tbc_app/components/reusablecomp.dart';
 import 'package:tbc_app/theme/app_colors.dart';
@@ -37,16 +35,12 @@ class _ResetPasswordState extends State<ResetPassword> {
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter Email Id", Icons.person_outline, false,
-                    _emailTextController),
+                reusableTextField("Masukan Email anda", Icons.person_outline,
+                    false, _emailTextController, 'Email'),
                 const SizedBox(
                   height: 20,
                 ),
-                firebaseUIButton(context, "Reset Password", () {
-                  FirebaseAuth.instance
-                      .sendPasswordResetEmail(email: _emailTextController.text)
-                      .then((value) => Navigator.of(context).pop());
-                })
+                ButtonAction(context, "Reset Password", () {})
               ],
             ),
           ))),

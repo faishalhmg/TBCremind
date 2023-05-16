@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:tbc_app/data/Models/user/user_model.dart';
 import 'package:tbc_app/data/buttonMenuMap.dart';
 import 'package:tbc_app/data/cardMenuTileMap.dart';
 import 'package:tbc_app/theme/app_colors.dart';

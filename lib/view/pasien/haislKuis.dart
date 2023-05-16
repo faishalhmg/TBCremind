@@ -1,11 +1,14 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:tbc_app/data/cardMenuTileMap.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
+// ignore: camel_case_types
 class hasilKuis extends StatelessWidget {
-  const hasilKuis({super.key});
+  const hasilKuis({
+    super.key,
+  });
 
   Widget cardviewdhasil() {
     return Card(
@@ -22,12 +25,12 @@ class hasilKuis extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(child: Text('name')),
-                    Expanded(child: Text('name')),
+                    const Expanded(child: Text('name')),
+                    const Expanded(child: Text('name')),
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 indent: 10,
                 endIndent: 10,
                 color: AppColors.appBarColor,
@@ -38,12 +41,12 @@ class hasilKuis extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(child: Text('Jumlah keluarga')),
-                    Expanded(child: Text('orang')),
+                    const Expanded(child: Text('Jumlah keluarga')),
+                    const Expanded(child: Text('orang')),
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 indent: 10,
                 endIndent: 10,
                 color: AppColors.appBarColor,
@@ -54,12 +57,12 @@ class hasilKuis extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(child: Text('Hasil Kuis Pola TB')),
-                    Expanded(child: Text('xxxxxxx')),
+                    const Expanded(child: Text('Hasil Kuis Pola TB')),
+                    const Expanded(child: Text('xxxxxxx')),
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 indent: 10,
                 endIndent: 10,
                 color: AppColors.appBarColor,
@@ -77,7 +80,7 @@ class hasilKuis extends StatelessWidget {
       appBar: AppBar(
         title: Text(cardmenuDetailsTile[1]['title']),
         backgroundColor: AppColors.appBarColor,
-        iconTheme: IconThemeData(color: AppColors.buttonIconColor),
+        iconTheme: const IconThemeData(color: AppColors.buttonIconColor),
       ),
       backgroundColor: AppColors.pageBackground,
       body: Column(
@@ -85,7 +88,7 @@ class hasilKuis extends StatelessWidget {
           const SizedBox(
             height: 100,
           ),
-          Text(
+          const Text(
             'Hasil Kuisioner',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
