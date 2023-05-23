@@ -19,7 +19,7 @@ class DioClient {
   DioClient([Dio? dio])
       : _dio = Dio(
           BaseOptions(
-            baseUrl: 'http://faishalhmg.hyperphp.com/api/',
+            baseUrl: 'http://tbc.restikol.my.id/api/',
             connectTimeout: Duration(seconds: 5000),
             receiveTimeout: Duration(seconds: 3000),
             responseType: ResponseType.json,
@@ -40,8 +40,6 @@ class DioClient {
         options: Options(headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie':
-              '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           'Authorization': 'Bearer $token'
         }),
       );
@@ -79,8 +77,6 @@ class DioClient {
         options: Options(headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie':
-              '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           'Authorization': 'Bearer $token'
         }),
       );
@@ -92,19 +88,19 @@ class DioClient {
         print('User Info: ${userData.data}');
         return UserModel(
             id: int.tryParse(body['data']['id']),
-            nama: body['data']['nama'],
-            email: body['data']['email'],
-            username: body['data']['username'],
-            usia: int.parse(body['data']['usia']),
-            no_hp: body['data']['no_hp'],
-            nik: body['data']['nik'],
-            jk: body['data']['jk'],
-            alamat: body['data']['alamat'],
-            bb: body['data']['bb'],
-            goldar: body['data']['goldar'],
-            pet_kesehatan: body['data']['pet_kesehatan'],
-            pmo: body['data']['pmo'],
-            kaderTB: body['data']['kaderTB']);
+            nama: body['data']['nama'].toString(),
+            email: body['data']['email'].toString(),
+            username: body['data']['username'].toString(),
+            usia: body['data']['usia'].toString(),
+            no_hp: body['data']['no_hp'].toString(),
+            nik: body['data']['nik'].toString(),
+            jk: body['data']['jk'].toString(),
+            alamat: body['data']['alamat'].toString(),
+            bb: body['data']['bb'].toString(),
+            goldar: body['data']['goldar'].toString(),
+            pet_kesehatan: body['data']['pet_kesehatan'].toString(),
+            pmo: body['data']['pmo'].toString(),
+            kaderTB: body['data']['kaderTB'].toString());
       } else {
         return null;
       }
@@ -126,7 +122,14 @@ class DioClient {
   Future<User?> createUser({required User user}) async {
     User? retrievedUser;
     try {
-      Response response = await _dio.post('register', data: user.toJson());
+      Response response = await _dio.post(
+        'register',
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }),
+        data: user.toJson(),
+      );
       print('User created: ${response.data}');
       retrievedUser = User.fromJson(response.data);
     } on DioError catch (err) {
@@ -153,8 +156,6 @@ class DioClient {
         data: userModel.toJson(),
         options: Options(headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          'Cookie':
-              '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           'Authorization': 'Bearer $token'
         }),
       );
@@ -169,7 +170,7 @@ class DioClient {
             nama: body['data']['nama'],
             email: body['data']['email'],
             username: body['data']['username'],
-            usia: int.tryParse(body['data']['usia']),
+            usia: body['data']['usia'],
             no_hp: body['data']['no_hp'],
             nik: body['data']['nik'],
             alamat: body['data']['alamat'],
@@ -205,8 +206,6 @@ class DioClient {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Cookie':
-                '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           },
         ));
     if (response.statusCode == 200) {
@@ -336,8 +335,6 @@ class DioClient {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
-          'Cookie':
-              '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
         }),
       );
 
@@ -391,8 +388,6 @@ class DioClient {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $token',
-            'Cookie':
-                '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           }));
       print('Info keluarga created: ${response.data}');
       retrievedKeluarga = Keluarga.fromJson(response.data);
@@ -415,8 +410,6 @@ class DioClient {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $token',
-            'Cookie':
-                '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           }));
       print('Data Keluarga Delete!');
     } catch (e) {
@@ -430,12 +423,10 @@ class DioClient {
     String? token = await _storageService.readSecureData('token');
     try {
       Response response = await _dio.put(
-        'datakeluarga/$id',
+        'dataKeluarga/$id',
         data: keluarga.toJson(),
         options: Options(headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          'Cookie':
-              '__test=74437f902dfbc42d53171b9b7474d2d6;expires=Wed;19-Jun-2024 11:54:43 GMT; path=/',
           'Authorization': 'Bearer $token'
         }),
       );

@@ -43,14 +43,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           decoration: const BoxDecoration(color: AppColors.appBarColor),
           child: SingleChildScrollView(
               child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
+            padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
             child: Column(
               children: <Widget>[
                 Image.asset(
                   "assets/images/logo.png",
                   fit: BoxFit.fitHeight,
-                  width: 240,
-                  height: 240,
+                  width: 150,
+                  height: 150,
                 ),
                 const SizedBox(
                   height: 20,
@@ -88,12 +88,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ButtonAction(context, "Daftar", () async {
                   setState(() => isLoading = true);
                   final user = User(
-                      nama: _namaTextController.text,
-                      username: _userNameTextController.text,
-                      email: _emailTextController.text,
-                      nik: _nikTextController.text,
-                      password: _passwordTextController.text,
-                      confirm_password: _passwordagainTextController.text);
+                    nama: _namaTextController.text,
+                    username: _userNameTextController.text,
+                    email: _emailTextController.text,
+                    nik: _nikTextController.text,
+                    password: _passwordTextController.text,
+                    confirm_password: _passwordagainTextController.text,
+                    alamat: '',
+                    usia: null,
+                    no_hp: '',
+                    goldar: '',
+                    bb: '',
+                    kaderTB: '',
+                    pmo: '',
+                    pet_kesehatan: '',
+                    jk: '',
+                  );
                   try {
                     final responseUser =
                         await widget.dioClient.createUser(user: user);
@@ -101,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         duration: Duration(seconds: 5),
                         content: Text('Registrasi berhasil silahkan login')));
-                    context.go('/login');
+                    context.goNamed('login');
                   } catch (err) {
                     setState(() =>
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

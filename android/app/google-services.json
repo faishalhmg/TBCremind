@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:15724884705:android:aae350604dd0d7c5a4fda0",
         "android_client_info": {
-          "package_name": "com.example.tbc_app"
+          "package_name": "com.TBCRemind.remindApp"
         }
       },
       "oauth_client": [

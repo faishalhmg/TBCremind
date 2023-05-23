@@ -1,11 +1,14 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tbc_app/bloc/bloc/user_bloc.dart';
 import 'package:tbc_app/components/cardButton.dart';
 import 'package:tbc_app/data/buttonMenuMap.dart';
 import 'package:tbc_app/data/dio/DioClient.dart';
+import 'package:tbc_app/routes/routers.dart';
 import 'package:tbc_app/service/SharedPreferenceHelper.dart';
 
 import 'package:tbc_app/theme/app_colors.dart';
@@ -156,6 +159,13 @@ class HomePage extends StatelessWidget {
                           const Text('Keluar', style: TextStyle(fontSize: 18)),
                       onTap: () async {
                         context.read<UserBloc>().add(SignOut());
+                        SharedPreferences pref =
+                            await SharedPreferences.getInstance();
+                        final storage = new FlutterSecureStorage();
+                        storage.deleteAll();
+                        pref.remove('nikOremail');
+                        pref.remove('token');
+                        router.goNamed('login');
                       }),
                 ],
               ),
@@ -171,8 +181,8 @@ class HomePage extends StatelessWidget {
                     Image.asset(
                       "assets/images/logo.png",
                       fit: BoxFit.fitHeight,
-                      width: 200,
-                      height: 200,
+                      width: 150,
+                      height: 150,
                     ),
                     const SizedBox(
                       height: 40,

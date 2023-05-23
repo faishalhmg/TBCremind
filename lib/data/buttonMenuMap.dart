@@ -29,7 +29,7 @@ final List<Map<String, dynamic>> menuDetails = [
     'pageName': 'efekObat',
     'title': 'Efek Obat',
     'role': 'pasien',
-    'icon': Icons.dangerous
+    'icon': Icons.medication_liquid_rounded
   },
   {
     'pageName': 'edukasiTBC',

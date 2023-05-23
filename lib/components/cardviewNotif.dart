@@ -11,8 +11,8 @@ class Cardview extends StatelessWidget {
       color: AppColors.cardcolor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: SizedBox(
-        height: 160,
-        width: 100,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         child: InkWell(
           splashColor: AppColors.sidebar,
           onTap: () {},
@@ -20,21 +20,42 @@ class Cardview extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
-                Wrap(
-                  spacing: 150,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(Icons.notifications),
-                    const Text('Judul Notifikasi'),
-                    const Text('Tanggal')
+                    Icon(Icons.notifications),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Judul Notifikasi'),
+                    SizedBox(
+                      width: 150,
+                    ),
+                    Text('Tanggal')
                   ],
                 ),
-                const SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: Text('Isi Notof'),
+                SizedBox(
+                  height: 10,
                 ),
-                const SizedBox(
-                  child: Text('pengirim'),
+                SizedBox(
+                  height: 120,
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Isi Notof'),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('pengirim'),
+                    ],
+                  ),
                 )
               ],
             ),

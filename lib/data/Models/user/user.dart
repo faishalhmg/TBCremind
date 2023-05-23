@@ -13,7 +13,7 @@ class User {
   String password;
   String confirm_password;
   String? alamat;
-  String? usia;
+  int? usia;
   String? no_hp;
   String? goldar;
   String? bb;

@@ -30,7 +30,7 @@ class UserModel {
   String? email;
   String? nik;
   String? alamat;
-  int? usia;
+  String? usia;
   String? no_hp;
   String? goldar;
   String? bb;

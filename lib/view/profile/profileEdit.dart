@@ -395,7 +395,7 @@ class _EditProfileState extends State<EditProfile> {
                                       : '-',
                                   jk: jk,
                                   alamat: alamat,
-                                  usia: usia,
+                                  usia: usia.toString(),
                                   no_hp: no_hp,
                                   bb: bb,
                                   goldar: goldar,
@@ -435,9 +435,17 @@ class _EditProfileState extends State<EditProfile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            state is UserSignedIn ? state.userModel.nama! : '-',
-                            style: TextStyle(fontSize: 25),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                state is UserSignedIn
+                                    ? state.userModel.nama!
+                                    : '-',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 15,

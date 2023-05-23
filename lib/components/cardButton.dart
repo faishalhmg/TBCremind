@@ -22,16 +22,22 @@ class CardButton extends StatelessWidget {
       color: AppColors.cardButtonColor,
       elevation: 30.0,
       child: SizedBox(
-        height: 150,
-        width: 150,
+        height: 120,
+        width: 120,
         child: InkWell(
           onTap: () async {
             context.goNamed(menuDetails[no]['pageName']);
           },
           child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(menuDetails[no]['icon']),
+                Icon(
+                  menuDetails[no]['icon'],
+                  size: 50,
+                  color: AppColors.buttonColor,
+                ),
                 Text(menuDetails[no]['title'])
               ],
             ),

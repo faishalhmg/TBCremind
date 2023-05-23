@@ -15,7 +15,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       password: json['password'] as String,
       confirm_password: json['confirm_password'] as String,
       alamat: json['alamat'] as String?,
-      usia: json['usia'] as String?,
+      usia: json['usia'] as int?,
       no_hp: json['no_hp'] as String?,
       goldar: json['goldar'] as String?,
       bb: json['bb'] as String?,

@@ -26,7 +26,7 @@ class Notifications extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                child: Cardview(),
+                child: SizedBox(width: 200, height: 200, child: Cardview()),
               ),
               Divider(
                 indent: 20,

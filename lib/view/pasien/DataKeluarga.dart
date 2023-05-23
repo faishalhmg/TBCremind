@@ -13,36 +13,39 @@ class Datakeluarga extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Data Keluarga'),
-            backgroundColor: AppColors.appBarColor,
-            iconTheme: const IconThemeData(color: AppColors.buttonIconColor),
-          ),
-          backgroundColor: AppColors.pageBackground,
-          body: ListView.builder(
-            itemCount: cardmenuDetailsTile.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: CardviewTile(
-                      id: index,
+    return BlocProvider(
+      create: (context) => UserBloc()..add(CheckSignInStatus()),
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Data Keluarga'),
+              backgroundColor: AppColors.appBarColor,
+              iconTheme: const IconThemeData(color: AppColors.buttonIconColor),
+            ),
+            backgroundColor: AppColors.pageBackground,
+            body: ListView.builder(
+              itemCount: cardmenuDetailsTile.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: CardviewTile(
+                        id: index,
+                      ),
                     ),
-                  ),
-                  const Divider(
-                    indent: 20,
-                    endIndent: 20,
-                  )
-                ],
-              );
-            },
-          ),
-        );
-      },
+                    const Divider(
+                      indent: 20,
+                      endIndent: 20,
+                    )
+                  ],
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
