@@ -19,6 +19,7 @@ import 'package:tbc_app/view/pasien/infokeluarga/infoKeluarga.dart';
 import 'package:tbc_app/view/pasien/infokeluarga/infoKeluargaEdit.dart';
 import 'package:tbc_app/view/pasien/pengambilanObat.dart';
 import 'package:tbc_app/view/pasien/pengingat/tambahpengingat.dart';
+import 'package:tbc_app/view/pasien/periksa/configPeriksa.dart';
 import 'package:tbc_app/view/pasien/periksaDahak.dart';
 import 'package:tbc_app/view/profile/profile.dart';
 import 'package:tbc_app/view/profile/profileEdit.dart';
@@ -118,7 +119,19 @@ final GoRouter router = GoRouter(
                 name: 'periksaDahak',
                 pageBuilder: (context, state) {
                   return const NoTransitionPage(child: PeriksaDahak());
-                }),
+                },
+                routes: [
+                  GoRoute(
+                    path: 'configPeriksa',
+                    name: 'configPeriksa',
+                    pageBuilder: (context, state) {
+                      return NoTransitionPage(
+                          child: ConfigPeriksa(
+                        arg: state.extra as ModifyAlarmPeriksaScreenArg?,
+                      ));
+                    },
+                  )
+                ]),
             GoRoute(
                 path: 'pengambilanObat',
                 name: 'pengambilanObat',

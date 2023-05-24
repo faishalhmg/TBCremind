@@ -20,7 +20,7 @@ class PeriksaDataModelAdapter extends TypeAdapter<PeriksaDataModel> {
       id: fields[0] as int?,
       time: fields[1] as DateTime,
       date1: fields[2] as DateTime,
-      date2: fields[3] as DateTime,
+      date2: fields[3] as DateTime?,
       lokasi: fields[4] as String,
     );
   }

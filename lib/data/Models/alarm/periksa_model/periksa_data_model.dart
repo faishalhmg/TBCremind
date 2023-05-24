@@ -11,9 +11,9 @@ class PeriksaDataModel {
   @HiveField(1)
   final DateTime time;
   @HiveField(2)
-  final DateTime date1;
+  DateTime date1;
   @HiveField(3)
-  final DateTime date2;
+  DateTime? date2;
   @HiveField(4)
   final String lokasi;
 
@@ -21,7 +21,7 @@ class PeriksaDataModel {
       {int? id,
       required this.time,
       required this.date1,
-      required this.date2,
+      this.date2,
       required this.lokasi}) {
     this.id = id ?? Random.secure().nextInt(10000 - 1000) + 1000;
   }

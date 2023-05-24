@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:tbc_app/data/Models/alarm/alarm_hive_storage.dart';
-import 'package:tbc_app/data/Models/alarm/data_model/alarm_data_model.dart';
+import 'package:tbc_app/data/Models/alarm/periksa_hive_storage.dart';
+import 'package:tbc_app/data/Models/alarm/periksa_model/periksa_data_model.dart';
 import 'package:tbc_app/helper/alarm_helper.dart';
 import 'package:timezone/timezone.dart';
 
-class AlarmModel extends ChangeNotifier {
-  final AlarmsHiveLocalStorage _storage;
+class PeriksaModel extends ChangeNotifier {
+  final PeriksaHiveLocalStorage _storage;
 
-  AlarmState? state;
-  List<AlarmDataModel>? alarms;
+  PeriksaState? state;
+  List<PeriksaDataModel>? periksas;
   bool loading = true;
 
-  AlarmModel(AlarmsHiveLocalStorage storage) : _storage = storage {
-    _storage.init().then((_) => loadAlarms());
+  PeriksaModel(PeriksaHiveLocalStorage storage) : _storage = storage {
+    _storage.init().then((_) => loadPeriksas());
   }
 
   @override
@@ -22,108 +22,108 @@ class AlarmModel extends ChangeNotifier {
     super.dispose();
   }
 
-  void loadAlarms() async {
-    final alarms = await _storage.loadAlarms();
+  void loadPeriksas() async {
+    final periksas = await _storage.loadPeriksas();
 
-    this.alarms = List.from(alarms);
-    state = AlarmLoaded(alarms);
+    this.periksas = List.from(periksas);
+    state = PeriksaLoaded(periksas);
     loading = false;
     notifyListeners();
   }
 
-  Future<void> addAlarm(AlarmDataModel alarm) async {
+  Future<void> addPeriksa(PeriksaDataModel periksa) async {
     loading = true;
     notifyListeners();
 
-    final newAlarm = await _storage.addAlarm(alarm);
-    alarms!.add(newAlarm);
-    alarms!.sort(alarmSort);
+    final newPeriksa = await _storage.addPeriksa(periksa);
+    periksas!.add(newPeriksa);
+    periksas!.sort(periksasort);
 
-    alarms = List.from(alarms!);
+    periksas = List.from(periksas!);
 
     loading = false;
-    state = AlarmCreated(
-      alarm,
-      alarms!.indexOf(newAlarm),
+    state = PeriksaCreated(
+      periksa,
+      periksas!.indexOf(newPeriksa),
     );
     notifyListeners();
 
-    await _scheduleAlarm(alarm);
+    await _scheduledPeriksa(periksa);
   }
 
-  Future<void> updateAlarm(AlarmDataModel alarm, int index) async {
+  Future<void> updatePeriksa(PeriksaDataModel periksa, int index) async {
     loading = true;
     notifyListeners();
 
-    final newAlarm = await _storage.updateAlarm(alarm);
+    final newPeriksa = await _storage.updatePeriksa(periksa);
 
-    alarms![index] = newAlarm;
-    alarms!.sort(alarmSort);
-    alarms = List.from(alarms!);
+    periksas![index] = newPeriksa;
+    periksas!.sort(periksasort);
+    periksas = List.from(periksas!);
 
     loading = false;
-    state = AlarmUpdated(
-      newAlarm,
-      alarm,
+    state = PeriksaUpdate(
+      newPeriksa,
+      periksa,
       index,
-      alarms!.indexOf(newAlarm),
+      periksas!.indexOf(newPeriksa),
     );
     notifyListeners();
 
-    await _removeScheduledAlarm(alarm);
-    await _scheduleAlarm(newAlarm);
+    await _removeScheduledPeriksa(periksa);
+    await _scheduledPeriksa(newPeriksa);
   }
 
-  Future<void> deleteAlarm(AlarmDataModel alarm, int index) async {
+  Future<void> deletePeriksa(PeriksaDataModel periksa, int index) async {
     loading = true;
     notifyListeners();
 
-    await _storage.removeAlarm(alarm);
+    await _storage.removePeriksa(periksa);
 
-    alarms!.removeAt(index);
+    periksas!.removeAt(index);
 
     loading = false;
-    state = AlarmDeleted(
-      alarm,
+    state = PeriksaDeleted(
+      periksa,
       index,
     );
     notifyListeners();
 
-    await _removeScheduledAlarm(alarm);
+    await _removeScheduledPeriksa(periksa);
   }
 
-  int alarmSort(alarm1, alarm2) => alarm1.time.compareTo(alarm2.time);
+  int periksasort(periksa1, periksa2) => periksa1.time.compareTo(periksa2.time);
 
-  Future<void> _removeScheduledAlarm(AlarmDataModel alarm) async {
+  Future<void> _removeScheduledPeriksa(PeriksaDataModel periksa) async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
 
     final List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-    if (alarm.weekdays.isNotEmpty) {
+    if (periksa.date2 != null) {
       for (var notification in pendingNotificationRequests) {
         // get grouped id
-        if ((notification.id / 10).floor() == alarm.id) {
+        if ((notification.id / 10).floor() == periksa.id) {
           await flutterLocalNotificationsPlugin.cancel(notification.id);
         }
       }
     } else {
-      await flutterLocalNotificationsPlugin.cancel(alarm.id);
+      await flutterLocalNotificationsPlugin.cancel(periksa.id);
     }
   }
 
-  Future<void> _scheduleAlarm(AlarmDataModel alarm) async {
+  Future<void> _scheduledPeriksa(PeriksaDataModel periksa) async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'alarm',
-      'Alarm',
-      channelDescription: 'Show the alarm',
+      'periksa',
+      'Periksa Obat',
+      channelDescription: 'Show the periksa',
       importance: Importance.max,
       priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('alarm'),
+      sound: RawResourceAndroidNotificationSound('periksa'),
     );
     const IOSNotificationDetails iOSPlatformChannelSpecifics =
         IOSNotificationDetails(
@@ -137,79 +137,56 @@ class AlarmModel extends ChangeNotifier {
       iOS: iOSPlatformChannelSpecifics,
     );
 
-    if (alarm.weekdays.isEmpty) {
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        alarm.id,
-        'Alarm at ${fromTimeToString(alarm.time)}',
-        'Ring Ring!!!',
-        TZDateTime.local(
-          alarm.time.year,
-          alarm.time.month,
-          alarm.time.day,
-          alarm.time.hour,
-          alarm.time.minute,
-        ),
-        platformChannelSpecifics,
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
-    } else {
-      for (var weekday in alarm.weekdays) {
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-          // acts as an id, for cancelling later
-          alarm.id * 10 + weekday,
-          'Alarm at ${fromTimeToString(alarm.time)}',
-          'Ring Ring!!!',
-          TZDateTime.local(
-            alarm.time.year,
-            alarm.time.month,
-            alarm.time.day - alarm.time.weekday + weekday,
-            alarm.time.hour,
-            alarm.time.minute,
-          ),
-          platformChannelSpecifics,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-        );
-      }
-    }
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      periksa.id,
+      'periksa at ${fromTimeToString(periksa.time)}',
+      'Ring Ring!!!',
+      TZDateTime.local(
+        periksa.time.year,
+        periksa.time.month,
+        periksa.date2!.day,
+        periksa.time.hour,
+        periksa.time.minute,
+      ),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 }
 
-abstract class AlarmState {
-  const AlarmState();
+abstract class PeriksaState {
+  const PeriksaState();
 }
 
-class AlarmLoaded extends AlarmState {
-  final List<AlarmDataModel> alarms;
+class PeriksaLoaded extends PeriksaState {
+  final List<PeriksaDataModel> periksas;
 
-  const AlarmLoaded(this.alarms);
+  const PeriksaLoaded(this.periksas);
 }
 
 // state for create, update, delete,
-class AlarmCreated extends AlarmState {
-  final AlarmDataModel alarm;
+class PeriksaCreated extends PeriksaState {
+  final PeriksaDataModel periksa;
   final int index;
 
-  const AlarmCreated(this.alarm, this.index);
+  const PeriksaCreated(this.periksa, this.index);
 }
 
-class AlarmDeleted extends AlarmState {
-  final AlarmDataModel alarm;
+class PeriksaDeleted extends PeriksaState {
+  final PeriksaDataModel periksa;
   final int index;
 
-  const AlarmDeleted(this.alarm, this.index);
+  const PeriksaDeleted(this.periksa, this.index);
 }
 
-class AlarmUpdated extends AlarmState {
-  final AlarmDataModel alarm;
-  final AlarmDataModel oldAlarm;
+class PeriksaUpdate extends PeriksaState {
+  final PeriksaDataModel periksa;
+  final PeriksaDataModel oldperiksa;
   final int index;
   final int newIndex;
 
-  const AlarmUpdated(this.alarm, this.oldAlarm, this.index, this.newIndex);
+  const PeriksaUpdate(this.periksa, this.oldperiksa, this.index, this.newIndex);
 }

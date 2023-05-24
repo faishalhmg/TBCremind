@@ -229,7 +229,7 @@ class CardViewWidget extends StatelessWidget {
                     style: TextStyle(fontSize: 50),
                   ),
                   Text(
-                    'Judul',
+                    alarm.judul != null ? "${alarm.judul}" : '',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(

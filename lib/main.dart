@@ -7,7 +7,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:provider/provider.dart';
 import 'package:tbc_app/data/Models/alarm/alarm_hive_storage.dart';
+import 'package:tbc_app/data/Models/alarm/periksa_hive_storage.dart';
 import 'package:tbc_app/provider/alarm_provider.dart';
+import 'package:tbc_app/provider/periksa_provider.dart';
 import 'package:timezone/data/latest_all.dart';
 import 'package:timezone/timezone.dart';
 
@@ -117,6 +119,11 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => AlarmModel(
             const AlarmsHiveLocalStorage(),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PeriksaModel(
+            const PeriksaHiveLocalStorage(),
           ),
         )
       ],

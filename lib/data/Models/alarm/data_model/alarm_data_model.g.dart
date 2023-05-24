@@ -18,20 +18,23 @@ class AlarmDataModelAdapter extends TypeAdapter<AlarmDataModel> {
     };
     return AlarmDataModel(
       id: fields[0] as int?,
-      time: fields[1] as DateTime,
-      weekdays: (fields[2] as List).cast<int>(),
+      judul: fields[1] as String,
+      time: fields[2] as DateTime,
+      weekdays: (fields[3] as List).cast<int>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, AlarmDataModel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.time)
+      ..write(obj.judul)
       ..writeByte(2)
+      ..write(obj.time)
+      ..writeByte(3)
       ..write(obj.weekdays);
   }
 
