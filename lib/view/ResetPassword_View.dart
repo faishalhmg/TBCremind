@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tbc_app/components/reusablecomp.dart';
+import 'package:tbc_app/data/dio/DioClient.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -10,6 +12,7 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
+  final DioClient _dioClient = DioClient();
   TextEditingController _emailTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          "Reset Password",
+          "Forgot Password",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
@@ -40,7 +43,32 @@ class _ResetPasswordState extends State<ResetPassword> {
                 const SizedBox(
                   height: 20,
                 ),
-                ButtonAction(context, "Reset Password", () {})
+                ButtonAction(context, "Request Reset Password", () async {
+                  if (_emailTextController.text.isNotEmpty &&
+                      _emailTextController.text.contains('@')) {
+                    final a = await _dioClient.forgotPassowrd(
+                        email: _emailTextController.text);
+
+                    setState(() {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          duration: Duration(seconds: 3),
+                          content: Text(a.toString()),
+                        ),
+                      );
+                    });
+                    return context.replaceNamed('afterresetpassword');
+                  } else {
+                    setState(() {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          duration: Duration(seconds: 3),
+                          content: Text("masukan email anda !"),
+                        ),
+                      );
+                    });
+                  }
+                })
               ],
             ),
           ))),

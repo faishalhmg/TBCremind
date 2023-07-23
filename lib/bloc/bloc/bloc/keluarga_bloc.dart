@@ -23,23 +23,20 @@ class KeluargaBloc extends Bloc<KeluargaEvent, KeluargaState> {
     });
     on<AddKeluargaEvent>(
       (event, emit) async {
-        if (state is KeluargaLoadedState) {
-          try {
-            final keluarga = await _dioClient.createKeluarga(
-                id_pasien: event.id_pasien,
-                nama: event.nama,
-                usia: event.usia,
-                riwayat: event.riwayat,
-                jenis: event.jenis);
-            if (keluarga != null) {
-              emit(KeluargaLoadingState());
-              final keluarga =
-                  await _dioClient.getKeluarga(id: event.id_pasien);
-              emit(KeluargaLoadedState(keluarga));
-            }
-          } catch (e) {
-            emit(KeluargaErrorState(e.toString()));
+        try {
+          final keluarga = await _dioClient.createKeluarga(
+              id_pasien: event.id_pasien,
+              nama: event.nama,
+              usia: event.usia,
+              riwayat: event.riwayat,
+              jenis: event.jenis);
+          if (keluarga != null) {
+            emit(KeluargaLoadingState());
+            final keluarga = await _dioClient.getKeluarga(id: event.id_pasien);
+            emit(KeluargaLoadedState(keluarga));
           }
+        } catch (e) {
+          emit(KeluargaErrorState(e.toString()));
         }
       },
     );
@@ -77,6 +74,15 @@ class KeluargaBloc extends Bloc<KeluargaEvent, KeluargaState> {
         } catch (e) {
           emit(KeluargaErrorState(e.toString()));
         }
+      }
+    });
+    on<LoadedKeluargaEvent>((event, emit) async {
+      emit(KeluargaLoadingState());
+      try {
+        final keluarga = await _dioClient.getKeluargaPasien();
+        emit(KeluargaLoadedState1(keluarga));
+      } catch (e) {
+        emit(KeluargaErrorState(e.toString()));
       }
     });
   }

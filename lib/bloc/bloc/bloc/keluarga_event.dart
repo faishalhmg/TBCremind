@@ -56,3 +56,9 @@ class UpdateKeluargaEvent extends KeluargaEvent {
   @override
   List<Object> get props => [id_pasien, nama, jenis, usia, riwayat];
 }
+
+class LoadedKeluargaEvent extends KeluargaEvent {
+  const LoadedKeluargaEvent();
+  @override
+  List<Object> get props => [];
+}

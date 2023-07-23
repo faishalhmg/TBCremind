@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 
 TextField reusableTextField(String text, IconData icon, bool isPasswordType,
@@ -43,6 +44,50 @@ TextField reusableTextField1(String text, TextEditingController controller) {
   );
 }
 
+TextField reusableTextField3(String text, TextEditingController controller) {
+  return TextField(
+    controller: controller,
+    cursorColor: Colors.black,
+    keyboardType: TextInputType.number,
+    style: TextStyle(color: Colors.black.withOpacity(0.9)),
+    decoration: InputDecoration.collapsed(
+      hintText: text,
+      hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+    ),
+  );
+}
+
+TextField reusableTextField4(String text, TextEditingController controller) {
+  return TextField(
+    controller: controller,
+    cursorColor: Colors.black,
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+      LengthLimitingTextInputFormatter(3),
+    ],
+    style: TextStyle(color: Colors.black.withOpacity(0.9)),
+    decoration: InputDecoration.collapsed(
+      hintText: text,
+      hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+    ),
+  );
+}
+
+TextField reusableTextField2(String text, TextEditingController controller) {
+  return TextField(
+    controller: controller,
+    cursorColor: Colors.black,
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    maxLength: 500,
+    style: TextStyle(color: Colors.black.withOpacity(0.9)),
+    decoration: InputDecoration.collapsed(
+      hintText: text,
+      hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+    ),
+  );
+}
+
 Container ButtonAction(BuildContext context, String title, Function onTap) {
   return Container(
     width: MediaQuery.of(context).size.width,
@@ -50,7 +95,7 @@ Container ButtonAction(BuildContext context, String title, Function onTap) {
     margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
     child: ElevatedButton(
-      onPressed: () async {
+      onPressed: () {
         onTap();
       },
       child: Text(

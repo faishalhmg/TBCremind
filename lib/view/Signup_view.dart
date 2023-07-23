@@ -70,11 +70,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter UserName", Icons.person_outline, false,
-                    _userNameTextController, 'UserName'),
-                const SizedBox(
-                  height: 20,
-                ),
+                // reusableTextField("Enter UserName", Icons.person_outline, false,
+                //     _userNameTextController, 'UserName'),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 reusableTextField("Masukan Kata sandi", Icons.lock_outlined,
                     true, _passwordTextController, 'Password'),
                 const SizedBox(
@@ -89,11 +89,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   setState(() => isLoading = true);
                   final user = User(
                     nama: _namaTextController.text,
-                    username: _userNameTextController.text,
+                    username: '',
                     email: _emailTextController.text,
                     nik: _nikTextController.text,
                     password: _passwordTextController.text,
                     confirm_password: _passwordagainTextController.text,
+                    role: 'pasien',
                     alamat: '',
                     usia: null,
                     no_hp: '',
@@ -113,9 +114,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         content: Text('Registrasi berhasil silahkan login')));
                     context.goNamed('login');
                   } catch (err) {
-                    setState(() =>
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          duration: const Duration(seconds: 3),
+                    setState(() => ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          duration: Duration(seconds: 3),
                           content: Text(' data tidak sesuai ketentuan'),
                         )));
                   }

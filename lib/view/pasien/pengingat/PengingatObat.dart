@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:alarm/alarm.dart';
+import 'package:alarm/model/alarm_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -10,13 +14,22 @@ import 'package:tbc_app/data/cardMenuTileMap.dart';
 import 'package:tbc_app/helper/alarm_helper.dart';
 import 'package:tbc_app/provider/alarm_provider.dart';
 import 'package:tbc_app/theme/app_colors.dart';
+import 'package:tbc_app/view/AlarmRinging.dart';
 import 'package:tbc_app/view/pasien/pengingat/tambahpengingat.dart';
 
-class PengingatObat extends StatelessWidget {
+class PengingatObat extends StatefulWidget {
   const PengingatObat({
     super.key,
   });
 
+  @override
+  State<PengingatObat> createState() => _PengingatObatState();
+}
+
+bool isSearchOpen = false;
+String searchQuery = '';
+
+class _PengingatObatState extends State<PengingatObat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,13 +39,41 @@ class PengingatObat extends StatelessWidget {
           iconTheme: IconThemeData(color: AppColors.buttonIconColor),
           actions: <Widget>[
             Padding(
+              padding: EdgeInsets.fromLTRB(40, 3, 0, 0),
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    isSearchOpen = !isSearchOpen;
+                  });
+                },
+              ),
+            ),
+            if (isSearchOpen)
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(40, 3, 0, 0),
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Search',
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
                   onTap: () {
                     context.pushNamed('tambahpengingat');
                   },
                   child: Icon(
-                    Icons.lock_clock_rounded,
+                    Icons.more_time,
                     size: 26.0,
                     color: AppColors.appBarIconColor,
                   ),
@@ -93,6 +134,7 @@ class _AlarmScheetState extends State<AlarmScheet>
   @override
   void dispose() {
     _controller!.dispose();
+
     super.dispose();
   }
 
@@ -140,8 +182,8 @@ class _AlarmScheetState extends State<AlarmScheet>
                 child: Container(
                     width: double.infinity,
                     color: Colors.transparent,
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
+                    child: const Padding(
+                      padding: EdgeInsets.all(5),
                     )),
               ),
               if (model.alarms != null)
@@ -155,7 +197,13 @@ class _AlarmScheetState extends State<AlarmScheet>
                     itemBuilder: (context, index, animation) {
                       if (index >= model.alarms!.length) return Container();
                       final alarm = model.alarms![index];
-
+                      if (searchQuery.isNotEmpty &&
+                          !alarm.judul
+                              .toString()
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
+                        return const SizedBox.shrink();
+                      }
                       return Column(
                         children: [
                           CardViewWidget(
@@ -212,7 +260,9 @@ class CardViewWidget extends StatelessWidget {
         ).chain(CurveTween(curve: Curves.elasticInOut)),
       ),
       child: Card(
-        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         color: AppColors.cardcolor,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -232,11 +282,12 @@ class CardViewWidget extends StatelessWidget {
                     alarm.judul != null ? "${alarm.judul}" : '',
                     style: TextStyle(fontSize: 20),
                   ),
+                  Padding(padding: EdgeInsets.only(bottom: 10)),
                   Text(
                     alarm.weekdays.isEmpty
-                        ? 'Never'
+                        ? 'Tidak ada'
                         : alarm.weekdays.length == 7
-                            ? 'Everyday'
+                            ? 'Setiap Hari'
                             : alarm.weekdays
                                 .map((weekday) =>
                                     fromWeekdayToStringShort(weekday))
@@ -251,7 +302,7 @@ class CardViewWidget extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: onTap,
-                    icon: Icon(Icons.punch_clock),
+                    icon: Icon(Icons.access_time_filled_sharp),
                     color: AppColors.buttonColor,
                     iconSize: 50,
                   ),
@@ -259,7 +310,7 @@ class CardViewWidget extends StatelessWidget {
                     onPressed: () async {
                       if (onDelete != null) onDelete!();
                     },
-                    icon: Icon(Icons.lock_clock_outlined),
+                    icon: Icon(Icons.auto_delete),
                     color: AppColors.buttonColor,
                     iconSize: 50,
                   ),

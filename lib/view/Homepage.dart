@@ -1,6 +1,8 @@
 // ignore_for_file: file_names
+import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +15,8 @@ import 'package:tbc_app/service/SharedPreferenceHelper.dart';
 
 import 'package:tbc_app/theme/app_colors.dart';
 
+ValueNotifier<bool> isAlarmRinging = ValueNotifier<bool>(false);
+
 class HomePage extends StatelessWidget {
   HomePage({
     super.key,
@@ -20,28 +24,21 @@ class HomePage extends StatelessWidget {
 
   SharedPref sharedPref = SharedPref();
 
+  String truncateWithEllipsis(int cutoff, String myString) {
+    return (myString.length <= cutoff)
+        ? myString
+        : '${myString.substring(0, cutoff)}...';
+  }
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => UserBloc()..add(CheckSignInStatus()),
         child: BlocBuilder<UserBloc, UserState>(builder: (context, state) {
           // if (state is UserSignedIn) {
-          // if (state is UserSignedOut) {
-          //   state is UserSignedOut;
-          //   return Scaffold(
-          //     backgroundColor: AppColors.pageBackground,
-          //     body: Container(
-          //       child: Center(
-          //         child: Builder(builder: (context) {
-          //           context.pushReplacementNamed('login');
-          //           return RefreshProgressIndicator(
-          //             color: AppColors.appBarColor,
-          //             backgroundColor: AppColors.buttonColor,
-          //           );
-          //         }),
-          //       ),
-          //     ),
-          //   );
+
           // }
           return Scaffold(
             appBar: AppBar(
@@ -53,12 +50,16 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 20.0),
                     child: GestureDetector(
                       onTap: () async {
+                        flutterLocalNotificationsPlugin
+                            .getActiveNotifications();
                         context.goNamed('notification');
                       },
-                      child: const Icon(
+                      child: Icon(
                         Icons.notifications,
                         size: 26.0,
-                        color: AppColors.appBarIconColor,
+                        color: Alarm.hasAlarm()
+                            ? AppColors.buttonColor
+                            : AppColors.appBarIconColor,
                       ),
                     )),
               ],
@@ -70,12 +71,8 @@ class HomePage extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: [
-                      const Expanded(
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://www.flaticon.com/free-icon/account_3033143?term=user&page=1&position=34&origin=search&related_id=3033143'),
-                          radius: 40.0,
-                        ),
+                      Expanded(
+                        child: Icon(Icons.account_circle, size: 100),
                       ),
                       Expanded(
                           child: Column(
@@ -85,7 +82,8 @@ class HomePage extends StatelessWidget {
                           SizedBox(
                             child: Text(
                               state is UserSignedIn
-                                  ? state.userModel.username!
+                                  ? truncateWithEllipsis(
+                                      20, state.userModel.nama!)
                                   : '-',
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -97,8 +95,10 @@ class HomePage extends StatelessWidget {
                             color: AppColors.appBarColor,
                             endIndent: 10,
                           ),
-                          const Text(
-                            'Role',
+                          Text(
+                            state is UserSignedIn
+                                ? state.userModel.role.toString()
+                                : 'Role',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -187,18 +187,83 @@ class HomePage extends StatelessWidget {
                     const SizedBox(
                       height: 40,
                     ),
-                    Wrap(
-                      spacing: 20,
-                      runSpacing: 20,
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        for (var x = 0; x < menuDetails.length; x++) ...[
-                          CardButton(
-                            no: x,
-                          )
-                        ],
-                      ],
+                    BlocBuilder<UserBloc, UserState>(
+                      builder: (context, state) {
+                        if (state is UserSignedIn &&
+                            state.userModel.role == "kader") {
+                          return Wrap(
+                            spacing: 20,
+                            runSpacing: 20,
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              CardButton(
+                                no: 6,
+                              ),
+                              CardButton(
+                                no: 5,
+                              )
+                            ],
+                          );
+                        } else if (state is UserSignedIn &&
+                            state.userModel.role == 'pasien') {
+                          return Wrap(
+                            spacing: 20,
+                            runSpacing: 20,
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              for (var x = 0; x < 6; x++) ...[
+                                CardButton(
+                                  no: x,
+                                )
+                              ],
+                            ],
+                          );
+                        } else if (state is UserSignedIn &&
+                            state.userModel.role == 'pk') {
+                          return Wrap(
+                            spacing: 20,
+                            runSpacing: 20,
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              CardButton(
+                                no: 6,
+                              ),
+                              CardButton(
+                                no: 7,
+                              )
+                            ],
+                          );
+                        } else if (state is UserSignedIn &&
+                            state.userModel.role == 'admin') {
+                          return Wrap(
+                            spacing: 20,
+                            runSpacing: 20,
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              CardButton(
+                                no: 8,
+                              ),
+                              CardButton(
+                                no: 9,
+                              )
+                            ],
+                          );
+                        }
+                        return const SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.buttonColor,
+                              strokeWidth: 5,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

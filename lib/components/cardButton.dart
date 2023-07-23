@@ -38,7 +38,10 @@ class CardButton extends StatelessWidget {
                   size: 50,
                   color: AppColors.buttonColor,
                 ),
-                Text(menuDetails[no]['title'])
+                Text(
+                  menuDetails[no]['title'],
+                  style: TextStyle(color: AppColors.appBarTextColor),
+                )
               ],
             ),
           ),

@@ -231,6 +231,179 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  Widget cardviewprofilnonpasien() {
+    return BlocBuilder<UserBloc, UserState>(
+      builder: (context, state) {
+        return Card(
+          color: AppColors.cardcolor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
+          child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Expanded(child: Text('Jenis Kelamin')),
+                        Expanded(
+                            child: Text(state is UserSignedIn
+                                ? state.userModel.jk!
+                                : '-')),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Expanded(child: Text('Alamat')),
+                        Expanded(
+                            child: Text(state is UserSignedIn
+                                ? state.userModel.alamat!
+                                : '-')),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Expanded(child: Text('Usia')),
+                        Expanded(
+                            child: Text(state is UserSignedIn
+                                ? state.userModel.usia.toString()
+                                : '-')),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Expanded(child: Text('No Hp')),
+                        Expanded(
+                            child: Text(state is UserSignedIn
+                                ? state.userModel.no_hp!
+                                : '-')),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Expanded(child: Text('Golongan Darah')),
+                        Expanded(
+                            child: Text(state is UserSignedIn
+                                ? state.userModel.goldar!
+                                : '-')),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Expanded(child: Text('Berat Badan')),
+                        Expanded(
+                            child: Text(state is UserSignedIn
+                                ? state.userModel.bb!
+                                : '-')),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                  if (state is UserSignedIn &&
+                      state.userModel.role!.contains('kader')) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text('posisi')),
+                          Expanded(
+                              child: Text(state is UserSignedIn
+                                  ? state.userModel.kaderTB!
+                                  : '-')),
+                        ],
+                      ),
+                    ),
+                  ] else if (state is UserSignedIn &&
+                      state.userModel.role!.contains('pk')) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text('posisi')),
+                          Expanded(
+                              child: Text(state is UserSignedIn
+                                  ? state.userModel.pet_kesehatan!
+                                  : '-')),
+                        ],
+                      ),
+                    ),
+                  ],
+                  const Divider(
+                    indent: 10,
+                    endIndent: 10,
+                    color: AppColors.appBarColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -264,11 +437,7 @@ class _ProfileState extends State<Profile> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          'https://www.flaticon.com/free-icon/account_3033143?term=user&page=1&position=34&origin=search&related_id=3033143'),
-                      radius: 40.0,
-                    ),
+                    const Icon(Icons.account_circle, size: 100),
                     const SizedBox(
                       height: 10,
                     ),
@@ -286,11 +455,15 @@ class _ProfileState extends State<Profile> {
                     const SizedBox(
                       height: 15,
                     ),
-                    cardviewprofil(),
+                    state.userModel.role!.contains('pasien')
+                        ? cardviewprofil()
+                        : cardviewprofilnonpasien(),
                     const SizedBox(
                       height: 15,
                     ),
-                    cardviewprofilext(),
+                    state.userModel.role!.contains('pasien')
+                        ? cardviewprofilext()
+                        : Container(),
                   ],
                 ),
               );

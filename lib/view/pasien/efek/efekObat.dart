@@ -1,38 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tbc_app/data/Models/alarm/periksa_model/periksa_data_model.dart';
-import 'package:tbc_app/data/Models/user/user_model.dart';
+import 'package:tbc_app/bloc/bloc/bloc/efek_bloc.dart';
+import 'package:tbc_app/bloc/bloc/user_bloc.dart';
+import 'package:tbc_app/data/Models/efek/efek.dart';
+import 'package:tbc_app/data/Models/efek/efek_data_model.dart';
 import 'package:tbc_app/data/buttonMenuMap.dart';
-import 'package:tbc_app/helper/alarm_helper.dart';
-import 'package:tbc_app/provider/periksa_provider.dart';
+import 'package:tbc_app/data/dio/DioClient.dart';
+import 'package:tbc_app/provider/efek_provider.dart';
 import 'package:tbc_app/theme/app_colors.dart';
-import 'package:tbc_app/view/pasien/PengingatObat.dart';
-import 'package:tbc_app/view/pasien/periksa/configPeriksa.dart';
+import 'package:tbc_app/view/pasien/efek/configEfek.dart';
 
-class PeriksaDahak extends StatelessWidget {
-  const PeriksaDahak({
+class EfekObat extends StatefulWidget {
+  const EfekObat({
     super.key,
   });
+
+  @override
+  State<EfekObat> createState() => _EfekObatState();
+}
+
+bool isSearchOpen = false;
+String searchQuery = '';
+
+class _EfekObatState extends State<EfekObat> {
+  Widget buildSearchField() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search',
+          border: InputBorder.none,
+        ),
+        onChanged: (value) {
+          setState(() {
+            searchQuery = value;
+          });
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(menuDetails[2]['title']),
+        title: Text(menuDetails[4]['title']),
         backgroundColor: AppColors.appBarColor,
         iconTheme: IconThemeData(color: AppColors.buttonIconColor),
         actions: <Widget>[
           Padding(
+            padding: EdgeInsets.fromLTRB(40, 3, 0, 0),
+            child: IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  isSearchOpen = !isSearchOpen;
+                });
+              },
+            ),
+          ),
+          if (isSearchOpen)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(40, 3, 0, 0),
+                child: TextField(
+                  decoration: const InputDecoration(
+                    hintText: 'Search',
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+          Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: GestureDetector(
                 onTap: () {
-                  context.pushNamed('configPeriksa');
+                  context.pushNamed('configEfek');
                 },
                 child: Icon(
-                  Icons.lock_clock_rounded,
+                  Icons.medical_services_sharp,
                   size: 26.0,
                   color: AppColors.appBarIconColor,
                 ),
@@ -43,8 +96,8 @@ class PeriksaDahak extends StatelessWidget {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-            child: PeriksaScheet(),
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+            child: EfekScheet(),
           ),
           Divider(
             indent: 10,
@@ -56,16 +109,16 @@ class PeriksaDahak extends StatelessWidget {
   }
 }
 
-class PeriksaScheet extends StatefulWidget {
-  const PeriksaScheet({
+class EfekScheet extends StatefulWidget {
+  const EfekScheet({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<PeriksaScheet> createState() => _PeriksaScheetState();
+  State<EfekScheet> createState() => _EfekScheetState();
 }
 
-class _PeriksaScheetState extends State<PeriksaScheet>
+class _EfekScheetState extends State<EfekScheet>
     with SingleTickerProviderStateMixin {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
@@ -112,19 +165,19 @@ class _PeriksaScheetState extends State<PeriksaScheet>
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      child: Selector<PeriksaModel, PeriksaModel>(
+      child: Selector<EfekModel, EfekModel>(
         shouldRebuild: (previous, next) {
-          if (next.state is PeriksaCreated) {
-            final state = next.state as PeriksaCreated;
+          if (next.state is EfekCreate) {
+            final state = next.state as EfekCreate;
             _listKey.currentState?.insertItem(state.index);
-          } else if (next.state is PeriksaUpdate) {
-            final state = next.state as PeriksaUpdate;
+          } else if (next.state is EfekUpdate) {
+            final state = next.state as EfekUpdate;
             if (state.index != state.newIndex) {
               _listKey.currentState?.insertItem(state.newIndex);
               _listKey.currentState?.removeItem(
                 state.index,
-                (context, animation) => CardViewDahak(
-                  alarm: state.periksa,
+                (context, animation) => CardViewEfek(
+                  alarm: state.efek,
                   animation: animation,
                 ),
               );
@@ -150,43 +203,46 @@ class _PeriksaScheetState extends State<PeriksaScheet>
                   });
                 },
                 child: Container(
-                    width: double.infinity,
-                    color: Colors.transparent,
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
-                    )),
+                  width: double.infinity,
+                  color: Colors.transparent,
+                ),
               ),
-              if (model.periksas != null)
+              if (model.efeks != null)
                 Expanded(
                   child: AnimatedList(
                     key: _listKey,
                     // not recommended for a list with large number of items
                     shrinkWrap: true,
-                    initialItemCount: model.periksas!.length,
+                    initialItemCount: model.efeks!.length,
 
                     itemBuilder: (context, index, animation) {
-                      if (index >= model.periksas!.length) return Container();
-                      final alarm = model.periksas![index];
-
+                      if (index >= model.efeks!.length) return Container();
+                      final alarm = model.efeks![index];
+                      if (searchQuery.isNotEmpty &&
+                          !alarm.judul
+                              .toString()
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
+                        return const SizedBox.shrink();
+                      }
                       return Column(
                         children: [
-                          CardViewDahak(
+                          CardViewEfek(
                               alarm: alarm,
                               animation: animation,
                               onDelete: () async {
                                 _listKey.currentState?.removeItem(
                                   index,
-                                  (context, animation) => CardViewDahak(
+                                  (context, animation) => CardViewEfek(
                                     alarm: alarm,
                                     animation: animation,
                                   ),
                                 );
-                                await model.deletePeriksa(alarm, index);
+                                await model.deleteEfek(alarm, index);
                               },
                               onTap: () async {
-                                context.goNamed('configPeriksa',
-                                    extra: ModifyAlarmPeriksaScreenArg(
-                                        alarm, index));
+                                context.goNamed('configEfek',
+                                    extra: ModifyEfekScreenArg(alarm, index));
                               }),
                           const Divider(color: AppColors.statusBarColor),
                         ],
@@ -202,8 +258,8 @@ class _PeriksaScheetState extends State<PeriksaScheet>
   }
 }
 
-class CardViewDahak extends StatelessWidget {
-  const CardViewDahak({
+class CardViewEfek extends StatelessWidget {
+  const CardViewEfek({
     Key? key,
     required this.alarm,
     required this.animation,
@@ -211,17 +267,19 @@ class CardViewDahak extends StatelessWidget {
     this.onTap,
   }) : super(key: key);
 
-  final PeriksaDataModel alarm;
+  final EfekDataModel alarm;
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
   final Animation<double> animation;
 
   Widget build(BuildContext context) {
     return Card(
-      elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       color: AppColors.cardcolor,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,27 +288,20 @@ class CardViewDahak extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  fromTimeToString(alarm.time),
-                  style: TextStyle(fontSize: 50),
-                ),
+                Text('${alarm.judul}', style: TextStyle(fontSize: 50)),
                 Text(
                   'Tanggal Awal : ' +
-                      '${alarm.date1.day}-${alarm.date1.month}-${alarm.date1.year}',
+                      '${alarm.p_awal.day}-${alarm.p_awal.month}-${alarm.p_awal.year}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Tanggal Selanjutnya : ' +
-                      '${alarm.date2!.day}-${alarm.date2!.month}-${alarm.date2!.year}',
+                      '${alarm.p_akhir!.day}-${alarm.p_akhir!.month}-${alarm.p_akhir!.year}',
                   style: TextStyle(fontSize: 20),
                 ),
                 const SizedBox(
                   height: 30,
                 ),
-                Text(
-                  'Lokasi Periksa',
-                  style: TextStyle(fontSize: 20),
-                )
               ],
             ),
             Column(
@@ -259,7 +310,7 @@ class CardViewDahak extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: onTap,
-                  icon: Icon(Icons.calendar_month_outlined),
+                  icon: Icon(Icons.edit),
                   color: AppColors.buttonColor,
                   iconSize: 50,
                 ),
@@ -267,7 +318,7 @@ class CardViewDahak extends StatelessWidget {
                   onPressed: () async {
                     if (onDelete != null) onDelete!();
                   },
-                  icon: Icon(Icons.calendar_month_rounded),
+                  icon: Icon(Icons.delete),
                   color: AppColors.buttonColor,
                   iconSize: 50,
                 ),

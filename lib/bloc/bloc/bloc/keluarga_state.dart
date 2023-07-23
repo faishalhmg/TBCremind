@@ -37,3 +37,10 @@ class KeluargaUpdateState extends KeluargaState {
   @override
   List<Object?> get props => [keluarga];
 }
+
+class KeluargaLoadedState1 extends KeluargaState {
+  List keluarga = [];
+  KeluargaLoadedState1(this.keluarga);
+  @override
+  List<Object?> get props => [keluarga];
+}

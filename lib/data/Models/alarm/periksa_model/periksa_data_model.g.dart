@@ -22,13 +22,14 @@ class PeriksaDataModelAdapter extends TypeAdapter<PeriksaDataModel> {
       date1: fields[2] as DateTime,
       date2: fields[3] as DateTime?,
       lokasi: fields[4] as String,
+      id_pasien: fields[5] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, PeriksaDataModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class PeriksaDataModelAdapter extends TypeAdapter<PeriksaDataModel> {
       ..writeByte(3)
       ..write(obj.date2)
       ..writeByte(4)
-      ..write(obj.lokasi);
+      ..write(obj.lokasi)
+      ..writeByte(5)
+      ..write(obj.id_pasien);
   }
 
   @override

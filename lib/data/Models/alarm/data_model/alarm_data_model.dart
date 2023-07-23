@@ -14,26 +14,28 @@ class AlarmDataModel {
   DateTime time;
   @HiveField(3)
   final List<int> weekdays;
+  @HiveField(4)
+  final int id_pasien;
 
-  AlarmDataModel({
-    int? id,
-    required this.judul,
-    required this.time,
-    required this.weekdays,
-  }) {
+  AlarmDataModel(
+      {int? id,
+      required this.judul,
+      required this.time,
+      required this.weekdays,
+      required this.id_pasien}) {
     this.id = id ?? Random.secure().nextInt(10000 - 1000) + 1000;
   }
 
-  AlarmDataModel copyWith({
-    int? id,
-    String? judul,
-    DateTime? time,
-    List<int>? weekdays,
-  }) =>
+  AlarmDataModel copyWith(
+          {int? id,
+          String? judul,
+          DateTime? time,
+          List<int>? weekdays,
+          int? id_pasien}) =>
       AlarmDataModel(
-        id: id ?? this.id,
-        judul: judul ?? this.judul,
-        time: time ?? this.time,
-        weekdays: weekdays != null ? List.from(weekdays) : this.weekdays,
-      );
+          id: id ?? this.id,
+          judul: judul ?? this.judul,
+          time: time ?? this.time,
+          weekdays: weekdays != null ? List.from(weekdays) : this.weekdays,
+          id_pasien: id_pasien ?? this.id_pasien);
 }

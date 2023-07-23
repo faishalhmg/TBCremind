@@ -12,6 +12,7 @@ class User {
   String nik;
   String password;
   String confirm_password;
+  String? role;
   String? alamat;
   int? usia;
   String? no_hp;
@@ -30,6 +31,7 @@ class User {
     required this.nik,
     required this.password,
     required this.confirm_password,
+    this.role,
     this.alamat,
     this.usia,
     this.no_hp,

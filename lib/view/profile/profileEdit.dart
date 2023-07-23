@@ -38,6 +38,8 @@ class _EditProfileState extends State<EditProfile> {
   Widget cardviewprofil() {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
+        selectedValue =
+            state is UserSignedIn ? state.userModel.jk.toString() : "Laki-Laki";
         return Card(
           color: AppColors.cardcolor,
           shape:
@@ -116,7 +118,7 @@ class _EditProfileState extends State<EditProfile> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: reusableTextField1(
+                                  child: reusableTextField4(
                                       state is UserSignedIn
                                           ? state.userModel.usia.toString()
                                           : '-',
@@ -141,7 +143,7 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         const Expanded(child: Text('No Hp')),
                         Expanded(
-                            child: reusableTextField1(
+                            child: reusableTextField3(
                                 state is UserSignedIn
                                     ? state.userModel.no_hp!
                                     : '-',
@@ -183,11 +185,18 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         const Expanded(child: Text('Berat Badan')),
                         Expanded(
-                            child: reusableTextField1(
-                                state is UserSignedIn
-                                    ? state.userModel.bb!
-                                    : '-',
-                                _bbTextController)),
+                            child: Row(
+                          children: [
+                            Expanded(
+                              child: reusableTextField4(
+                                  state is UserSignedIn
+                                      ? state.userModel.bb!
+                                      : '-',
+                                  _bbTextController),
+                            ),
+                            const Text(" KG"),
+                          ],
+                        )),
                       ],
                     ),
                   ),
@@ -205,7 +214,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget cardviewprofilext() {
+  Widget cardviewprofilnonpasien() {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         return Card(
@@ -278,6 +287,132 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget cardviewprofilext() {
+    return BlocBuilder<UserBloc, UserState>(
+      builder: (context, state) {
+        return Card(
+          color: AppColors.cardcolor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
+          child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: state is UserSignedIn &&
+                      state.userModel.role!.contains('pasien')
+                  ? Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Expanded(child: Text('KaderTB')),
+                              Expanded(
+                                  child: reusableTextField1(
+                                      state is UserSignedIn
+                                          ? state.userModel.kaderTB!
+                                          : '-',
+                                      _kadertbTextController)),
+                            ],
+                          ),
+                        ),
+                        const Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          color: AppColors.appBarColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Expanded(child: Text('PMO')),
+                              Expanded(
+                                  child: reusableTextField1(
+                                      state is UserSignedIn
+                                          ? state.userModel.pmo!
+                                          : '-',
+                                      _pmoTextController)),
+                            ],
+                          ),
+                        ),
+                        const Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          color: AppColors.appBarColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Expanded(child: Text('Pet Kesehatan')),
+                              Expanded(
+                                child: reusableTextField1(
+                                    state is UserSignedIn
+                                        ? state.userModel.pet_kesehatan!
+                                        : '-',
+                                    _petkesehatanTextController),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        if (state is UserSignedIn &&
+                            state.userModel.role!.contains('kader')) ...[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Expanded(child: Text('KaderTB')),
+                                Expanded(
+                                    child: reusableTextField1(
+                                        state is UserSignedIn
+                                            ? state.userModel.kaderTB!
+                                            : '-',
+                                        _kadertbTextController)),
+                              ],
+                            ),
+                          ),
+                        ] else if (state is UserSignedIn &&
+                            state.userModel.role!.contains('pk')) ...[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Expanded(child: Text('Pet Kesehatan')),
+                                Expanded(
+                                  child: reusableTextField1(
+                                      state is UserSignedIn
+                                          ? state.userModel.pet_kesehatan!
+                                          : '-',
+                                      _petkesehatanTextController),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else ...[
+                          Container()
+                        ]
+                      ],
+                    ),
             ),
           ),
         );
@@ -401,7 +536,10 @@ class _EditProfileState extends State<EditProfile> {
                                   goldar: goldar,
                                   kaderTB: kaderTB,
                                   pmo: pmo,
-                                  pet_kesehatan: pet_kesehatan)));
+                                  pet_kesehatan: pet_kesehatan,
+                                  role: state is UserSignedIn
+                                      ? state.userModel.role!
+                                      : '-')));
                           context.pushReplacementNamed('profile');
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -427,11 +565,7 @@ class _EditProfileState extends State<EditProfile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://www.flaticon.com/free-icon/account_3033143?term=user&page=1&position=34&origin=search&related_id=3033143'),
-                            radius: 40.0,
-                          ),
+                          const Icon(Icons.account_circle, size: 100),
                           const SizedBox(
                             height: 10,
                           ),

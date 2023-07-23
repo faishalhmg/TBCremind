@@ -8,6 +8,7 @@ import 'package:tbc_app/data/Models/user/user_model.dart';
 import 'package:tbc_app/data/dio/DioClient.dart';
 import 'package:tbc_app/routes/routers.dart';
 import 'package:tbc_app/service/SharedPreferenceHelper.dart';
+import 'package:tbc_app/service/StorageService.dart';
 import 'package:tbc_app/theme/app_colors.dart';
 import 'package:tbc_app/view/Signup_view.dart';
 
@@ -49,6 +50,37 @@ class _LoginScreenState extends State<LoginScreen> {
   //     }catch (e){}
   //   }
   // }
+  Future<void> checkToken() async {
+    final StorageService _storageService = StorageService();
+    String? token = await _storageService.readSecureData('token');
+    if (token != null) {
+      setState(() {
+        router.pushReplacementNamed('home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            duration: Duration(seconds: 3),
+            content: Text("Login Berhasil"),
+          ),
+        );
+      });
+    } else {
+      setState(() {
+        router.pushReplacementNamed('login');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            duration: Duration(seconds: 3),
+            content: Text("Pencet sekali lagi! atau Email/nik/password salah"),
+          ),
+        );
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    checkToken();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,41 +135,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         forgetPassword(context),
                         ButtonAction(context, "Masuk", () async {
                           if (state is UserSignedOut) {
-                            if (_emailTextController.text != '' &&
-                                _passwordTextController.text != '') {
-                              try {
-                                context.read<UserBloc>().add(SignIn(
-                                    nikOremail: _emailTextController.text,
-                                    password: _passwordTextController.text));
-                                context
-                                    .read<UserBloc>()
-                                    .add(CheckSignInStatus());
-                                const storage = FlutterSecureStorage();
-                                var token = await storage.read(key: 'token');
-                                if (token != '') {
-                                  setState(() {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        duration: Duration(seconds: 3),
-                                        content: Text(
-                                            "Pencet sekali lagi! atau Email/nik/password salah"),
-                                      ),
-                                    );
-                                    router.pushReplacementNamed('login');
-                                  });
-                                } else {
-                                  setState(() {
-                                    context.pushReplacementNamed('home');
-                                  });
-                                }
-                              } catch (e) {
-                                setState(() => ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      duration: const Duration(seconds: 3),
-                                      content: Text(e.toString()),
-                                    )));
-                              }
-                            }
                             if (_emailTextController.text == '' &&
                                     _passwordTextController.text == '' ||
                                 _emailTextController.text.length < 10 ||
@@ -149,6 +146,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                         'Silahkan Masukan email/nik dan password yang sesuai'),
                                   )));
                             }
+                            try {
+                              context.read<UserBloc>().add(SignIn(
+                                  nikOremail: _emailTextController.text,
+                                  password: _passwordTextController.text));
+                              checkToken();
+                            } catch (e) {}
+                            setState(() {
+                              checkToken();
+                            });
                           }
                           if (state is UserSignedIn) {
                             // ScaffoldMessenger.of(context).showSnackBar(
@@ -184,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(color: Colors.white70)),
         GestureDetector(
           onTap: () {
-            context.push('/signup');
+            context.pushNamed('signup');
           },
           child: const Text(
             " Sign Up",
@@ -206,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(color: Colors.white70),
             textAlign: TextAlign.right,
           ),
-          onPressed: () => context.go('/resetpassword')),
+          onPressed: () => context.goNamed('resetpassword')),
     );
   }
 }

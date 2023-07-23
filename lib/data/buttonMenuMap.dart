@@ -11,13 +11,13 @@ final List<Map<String, dynamic>> menuDetails = [
     'pageName': 'pengingatObat',
     'title': 'Pengingat Obat',
     'role': 'pasien',
-    'icon': Icons.lock_clock_outlined
+    'icon': Icons.access_alarm_sharp
   },
   {
     'pageName': 'periksaDahak',
     'title': 'Periksa Dahak',
     'role': 'pasien',
-    'icon': Icons.lock_clock_rounded
+    'icon': Icons.access_time_rounded
   },
   {
     'pageName': 'pengambilanObat',
@@ -36,5 +36,29 @@ final List<Map<String, dynamic>> menuDetails = [
     'title': 'Edukasi TBC',
     'role': 'pasien',
     'icon': Icons.newspaper_sharp
+  },
+  {
+    'pageName': 'dataPasien',
+    'title': 'Data Pasien',
+    'role': 'kader',
+    'icon': Icons.groups_sharp
+  },
+  {
+    'pageName': 'dataKeluargaP',
+    'title': 'Data Keluarga',
+    'role': 'Petugas Kesehatan',
+    'icon': Icons.people_alt_sharp
+  },
+  {
+    'pageName': 'dataUser',
+    'title': 'Data User',
+    'role': 'admin',
+    'icon': Icons.groups_sharp
+  },
+  {
+    'pageName': 'dataKuis',
+    'title': 'Data Kuis',
+    'role': 'admin',
+    'icon': Icons.groups_sharp
   },
 ];

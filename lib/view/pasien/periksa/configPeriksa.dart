@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tbc_app/bloc/bloc/user_bloc.dart';
 import 'package:tbc_app/components/cardviewNotif.dart';
 import 'package:tbc_app/data/Models/alarm/data_model/alarm_data_model.dart';
 import 'package:tbc_app/data/Models/alarm/periksa_model/periksa_data_model.dart';
@@ -32,12 +34,14 @@ class ConfigPeriksa extends StatefulWidget {
 }
 
 class _ConfigPeriksaState extends State<ConfigPeriksa> {
+  TextEditingController _lokasiTextController = TextEditingController();
   late PeriksaDataModel alarm = widget.arg?.alarm ??
       PeriksaDataModel(
         time: DateTime.now(),
         date1: DateTime.now(),
         date2: DateTime.now(),
         lokasi: '',
+        id_pasien: 0,
       );
   bool get _editing => widget.arg?.alarm != null;
 
@@ -78,11 +82,40 @@ class _ConfigPeriksaState extends State<ConfigPeriksa> {
             padding: EdgeInsets.all(20.0),
             child: GestureDetector(
               onTap: () async {
-                final model = context.read<PeriksaModel>();
-                context.goNamed('periksaDahak');
-                _editing
-                    ? await model.updatePeriksa(alarm, widget.arg!.index)
-                    : await model.addPeriksa(alarm);
+                if (alarm.lokasi.isNotEmpty) {
+                  final model = context.read<PeriksaModel>();
+                  context.goNamed('periksaDahak');
+                  _editing
+                      ? await model.updatePeriksa(alarm, widget.arg!.index)
+                      : await model.addPeriksa(alarm);
+                } else {
+                  return await showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: AppColors.cardcolor,
+                          title: const Text('Data Tidak boleh kosong !'),
+                          content: SingleChildScrollView(
+                            child: ListBody(
+                              children: <Widget>[
+                                Text('Cek kembali lokasi periksa anda.'),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('oke',
+                                  style:
+                                      TextStyle(color: AppColors.buttonColor)),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                }
               },
               child: const Icon(
                 Icons.save_as_rounded,
@@ -92,131 +125,199 @@ class _ConfigPeriksaState extends State<ConfigPeriksa> {
           )
         ],
       ),
+      backgroundColor: AppColors.pageBackground,
       body: Card(
-        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
         color: AppColors.cardcolor,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              children: [
-                // SizedBox(
-                //   height: 10,
-                // ),
-                // IconButton(
-                //     onPressed: () {},
-                //     icon: Icon(
-                //       Icons.arrow_upward_sharp,
-                //       size: 100,
-                //     ),
-                //     color: AppColors.buttonColor),
-                // SizedBox(
-                //   height: 10,
-                // ),
-                SizedBox(
-                  height: 200,
-                  child: CupertinoTheme(
-                    data: CupertinoThemeData(
-                        brightness: Theme.of(context).brightness,
-                        textTheme: CupertinoTextThemeData(
-                            dateTimePickerTextStyle: TextStyle(
-                                color: AppColors.buttonColor, fontSize: 30))),
-                    child: CupertinoDatePicker(
-                      use24hFormat: true,
-                      mode: CupertinoDatePickerMode.time,
-                      onDateTimeChanged: (value) {
-                        setState(() {
-                          alarm = alarm.copyWith(time: value);
-                        });
-                      },
-                      initialDateTime: alarm.time,
-                    ),
-                  ),
-                ),
-                // SizedBox(
-                //   height: 10,
-                // ),
-                // IconButton(
-                //     onPressed: () {},
-                //     icon: Icon(
-                //       Icons.arrow_downward_sharp,
-                //       color: AppColors.buttonColor,
-                //       size: 100,
-                //     )),
-                SizedBox(
-                  height: 50,
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Periksa Sebelumnya'),
-                        Text(alarm.date1 != null
-                            ? "${alarm.date1.day}-${alarm.date1.month}-${alarm.date1.year}"
-                            : formattedDate),
-                      ]),
-                ),
-                Divider(color: AppColors.statusBarColor),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 10, 5),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Periksa Selanjutnya'),
-                        TextButton(
-                            onPressed: () {
-                              _showDialog(CupertinoTheme(
-                                data: CupertinoThemeData(
-                                    brightness: Theme.of(context).brightness,
-                                    textTheme: CupertinoTextThemeData(
-                                        dateTimePickerTextStyle: TextStyle(
-                                            color: AppColors.buttonColor,
-                                            fontSize: 30))),
-                                child: CupertinoDatePicker(
-                                  use24hFormat: true,
-                                  mode: CupertinoDatePickerMode.date,
-                                  initialDateTime: alarm.date2,
-                                  onDateTimeChanged: (value) {
+        child: BlocProvider(
+          create: (context) => UserBloc()..add(CheckSignInStatus()),
+          child: BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              alarm = alarm.copyWith(
+                  id_pasien: state is UserSignedIn ? state.userModel.id : 0);
+              return Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
+                    children: [
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      // IconButton(
+                      //     onPressed: () {},
+                      //     icon: Icon(
+                      //       Icons.arrow_upward_sharp,
+                      //       size: 100,
+                      //     ),
+                      //     color: AppColors.buttonColor),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      SizedBox(
+                        height: 200,
+                        child: CupertinoTheme(
+                          data: CupertinoThemeData(
+                              brightness: Theme.of(context).brightness,
+                              textTheme: CupertinoTextThemeData(
+                                  dateTimePickerTextStyle: TextStyle(
+                                      color: AppColors.buttonColor,
+                                      fontSize: 30))),
+                          child: CupertinoDatePicker(
+                            use24hFormat: true,
+                            mode: CupertinoDatePickerMode.time,
+                            onDateTimeChanged: (value) {
+                              setState(() {
+                                alarm = alarm.copyWith(time: value);
+                              });
+                            },
+                            initialDateTime: alarm.time,
+                          ),
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      // IconButton(
+                      //     onPressed: () {},
+                      //     icon: Icon(
+                      //       Icons.arrow_downward_sharp,
+                      //       color: AppColors.buttonColor,
+                      //       size: 100,
+                      //     )),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Periksa Sebelumnya'),
+                              TextButton(
+                                  onPressed: () {
+                                    _showDialog(CupertinoTheme(
+                                      data: CupertinoThemeData(
+                                          brightness:
+                                              Theme.of(context).brightness,
+                                          textTheme: CupertinoTextThemeData(
+                                              dateTimePickerTextStyle:
+                                                  TextStyle(
+                                                      color:
+                                                          AppColors.buttonColor,
+                                                      fontSize: 30))),
+                                      child: CupertinoDatePicker(
+                                        use24hFormat: true,
+                                        mode: CupertinoDatePickerMode.date,
+                                        initialDateTime: alarm.date1,
+                                        onDateTimeChanged: (value) {
+                                          setState(() {
+                                            alarm =
+                                                alarm.copyWith(date1: value);
+                                          });
+                                        },
+                                      ),
+                                    ));
+                                  },
+                                  child: Text(
+                                    alarm.date2 != null
+                                        ? "${alarm.date1.day}-${alarm.date1.month}-${alarm.date1.year}"
+                                        : 'dd/mm/yyyy',
+                                    style: TextStyle(color: Colors.black),
+                                  )),
+                            ]),
+                      ),
+                      Divider(color: AppColors.statusBarColor),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Periksa Selanjutnya'),
+                              TextButton(
+                                  onPressed: () {
+                                    _showDialog(CupertinoTheme(
+                                      data: CupertinoThemeData(
+                                          brightness:
+                                              Theme.of(context).brightness,
+                                          textTheme: CupertinoTextThemeData(
+                                              dateTimePickerTextStyle:
+                                                  TextStyle(
+                                                      color:
+                                                          AppColors.buttonColor,
+                                                      fontSize: 30))),
+                                      child: CupertinoDatePicker(
+                                        use24hFormat: true,
+                                        mode: CupertinoDatePickerMode.date,
+                                        initialDateTime: alarm.date2,
+                                        onDateTimeChanged: (value) {
+                                          setState(() {
+                                            alarm =
+                                                alarm.copyWith(date2: value);
+                                          });
+                                        },
+                                      ),
+                                    ));
+                                  },
+                                  child: Text(
+                                    alarm.date2 != null
+                                        ? "${alarm.date2!.day}-${alarm.date2!.month}-${alarm.date2!.year}"
+                                        : 'dd/mm/yyyy',
+                                    style: TextStyle(color: Colors.black),
+                                  )),
+                            ]),
+                      ),
+                      Divider(color: AppColors.statusBarColor),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(child: Text('Lokasi periksa')),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: _lokasiTextController,
+                                  cursorColor: Colors.black,
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.9)),
+                                  decoration: InputDecoration.collapsed(
+                                    hintText: alarm.lokasi.isEmpty
+                                        ? ''
+                                        : alarm.lokasi,
+                                    hintStyle: TextStyle(
+                                        color: Colors.black.withOpacity(0.5)),
+                                  ),
+                                  onChanged: (value) {
                                     setState(() {
-                                      alarm = alarm.copyWith(date2: value);
+                                      alarm = alarm.copyWith(
+                                          lokasi: _lokasiTextController.text);
                                     });
                                   },
                                 ),
-                              ));
-                            },
-                            child: Text(
-                              alarm.date2 != null
-                                  ? "${alarm.date2!.day}-${alarm.date2!.month}-${alarm.date2!.year}"
-                                  : 'dd/mm/yyyy',
-                              style: TextStyle(color: Colors.black),
-                            )),
-                      ]),
-                ),
-                Divider(color: AppColors.statusBarColor),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Lokasi periksa'),
-                        Text('RS....'),
-                      ]),
-                ),
-                Divider(color: AppColors.statusBarColor),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(50, 10, 50, 0),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: []),
+                              ),
+                            ]),
+                      ),
+                      Divider(color: AppColors.statusBarColor),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(50, 10, 50, 0),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: []),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),

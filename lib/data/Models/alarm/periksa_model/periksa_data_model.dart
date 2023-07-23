@@ -16,13 +16,16 @@ class PeriksaDataModel {
   DateTime? date2;
   @HiveField(4)
   final String lokasi;
+  @HiveField(5)
+  final int id_pasien;
 
   PeriksaDataModel(
       {int? id,
       required this.time,
       required this.date1,
       this.date2,
-      required this.lokasi}) {
+      required this.lokasi,
+      required this.id_pasien}) {
     this.id = id ?? Random.secure().nextInt(10000 - 1000) + 1000;
   }
 
@@ -31,11 +34,13 @@ class PeriksaDataModel {
           DateTime? time,
           DateTime? date1,
           DateTime? date2,
-          String? lokasi}) =>
+          String? lokasi,
+          int? id_pasien}) =>
       PeriksaDataModel(
           id: id ?? this.id,
           time: time ?? this.time,
           date1: date1 ?? this.date1,
           date2: date2 ?? this.date2,
-          lokasi: lokasi ?? this.lokasi);
+          lokasi: lokasi ?? this.lokasi,
+          id_pasien: id_pasien ?? this.id_pasien);
 }

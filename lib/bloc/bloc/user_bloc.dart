@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tbc_app/data/Models/user/user_model.dart';
 import 'package:tbc_app/data/dio/DioClient.dart';
 import 'package:tbc_app/service/StorageService.dart';
+import 'package:tbc_app/service/storageitem.dart';
 
 part 'user_event.dart';
 part 'user_state.dart';
@@ -19,12 +20,21 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         if (token != null) {
           UserModel? userModel = await _dioClient.getUser(
               nikOremail: event.nikOremail, token: token);
+          final StorageService _storageService = StorageService();
+          await _storageService.writeSecureData(StorageItem('token', token));
           if (userModel != null) {
             SharedPreferences pref = await SharedPreferences.getInstance();
             pref.setString('nikOremail', event.nikOremail);
             pref.setString('token', token);
-            final storage = new FlutterSecureStorage();
-            await storage.write(key: 'token', value: token);
+            await _storageService
+                .writeSecureData(StorageItem('id', userModel.id.toString()));
+            await _storageService
+                .writeSecureData(StorageItem('nikOremail', event.nikOremail));
+            await _storageService
+                .writeSecureData(StorageItem('password', event.password));
+            await _storageService.writeSecureData(
+                StorageItem('role', userModel.role.toString()));
+
             emit(UserSignedIn(userModel: userModel));
           }
         }
@@ -33,8 +43,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<SignOut>((event, emit) async {
       if (state is UserSignedIn) {
         SharedPreferences pref = await SharedPreferences.getInstance();
-        final storage = new FlutterSecureStorage();
-        storage.deleteAll();
+        final StorageService _storageService = StorageService();
+        _storageService.deleteAllSecureData();
         pref.remove('nikOremail');
         pref.remove('token');
 
@@ -47,6 +57,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       // String? token = pref.getString('token');
       final StorageService _storageService = StorageService();
       String? token = await _storageService.readSecureData('token');
+      String? nikOremail1 = await _storageService.readSecureData('nikOremail');
+      String? password = await _storageService.readSecureData('password');
 
       if (nikOremail != null && token != null) {
         bool? tokenValid = await _dioClient.getToken(token: token);
@@ -55,8 +67,29 @@ class UserBloc extends Bloc<UserEvent, UserState> {
               await _dioClient.getUser(nikOremail: nikOremail, token: token);
           if (userModel != null) {
             emit(UserSignedIn(userModel: userModel));
-          } else {
-            emit(UserSignedOut());
+          }
+        } else {
+          String? token = await _dioClient.login(nikOremail1!, password!);
+          if (token != null) {
+            UserModel? userModel =
+                await _dioClient.getUser(nikOremail: nikOremail1, token: token);
+            if (userModel != null) {
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              pref.setString('nikOremail', nikOremail1);
+              pref.setString('token', token);
+              final StorageService _storageService = StorageService();
+
+              await _storageService
+                  .writeSecureData(StorageItem('token', token));
+              await _storageService
+                  .writeSecureData(StorageItem('id', userModel.id.toString()));
+              await _storageService
+                  .writeSecureData(StorageItem('nikOremail', nikOremail1));
+              await _storageService
+                  .writeSecureData(StorageItem('password', password));
+
+              emit(UserSignedIn(userModel: userModel));
+            }
           }
         }
       }

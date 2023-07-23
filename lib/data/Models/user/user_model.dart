@@ -12,6 +12,7 @@ class UserModel {
       this.username,
       this.email,
       this.nik,
+      this.role,
       this.alamat,
       this.usia,
       this.bb,
@@ -29,6 +30,7 @@ class UserModel {
   String? username;
   String? email;
   String? nik;
+  String? role;
   String? alamat;
   String? usia;
   String? no_hp;

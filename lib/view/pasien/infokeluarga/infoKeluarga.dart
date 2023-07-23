@@ -47,7 +47,7 @@ class infoKeluarga extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 20.0),
                     child: GestureDetector(
                       onTap: () {
-                        context.goNamed('editkeluarga');
+                        context.replaceNamed('editkeluarga');
                       },
                       child: const Icon(
                         Icons.edit,
@@ -76,39 +76,17 @@ class infoKeluarga extends StatelessWidget {
                     ),
                   ],
                   child: Column(children: <Widget>[
-                    const SizedBox(
-                      height: 10,
-                    ),
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          const SizedBox(
+                            height: 30,
+                          ),
                           const Text(
                             'Data Keluarga',
                             style: TextStyle(fontSize: 20),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          BlocBuilder<UserBloc, UserState>(
-                            builder: (context, state) {
-                              return IconButton(
-                                  onPressed: () async {
-                                    context.read<KeluargaBloc>().add(
-                                        AddKeluargaEvent(
-                                            nama: '',
-                                            jenis: '',
-                                            usia: 0,
-                                            riwayat: '',
-                                            id_pasien: state is UserSignedIn
-                                                ? state.userModel.id!
-                                                : 0));
-                                  },
-                                  icon: const Icon(
-                                    Icons.add_circle_outline_sharp,
-                                    color: AppColors.buttonIconColor,
-                                  ));
-                            },
                           ),
                         ]),
                     const SizedBox(
@@ -128,24 +106,8 @@ class infoKeluarga extends StatelessWidget {
                             itemCount: keluargaList.length,
                             itemBuilder: (context, index) {
                               final datakeluarga = keluargaList[index]['id'];
-                              return Dismissible(
-                                key: Key(datakeluarga),
-                                onDismissed: (direction) {
-                                  context.read<KeluargaBloc>().add(
-                                      DeleteKeluargaEvent(
-                                          id_pasien: int.parse(
-                                              keluargaList[index]['id_pasien']),
-                                          id: int.parse(
-                                              keluargaList[index]['id'])));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          duration: Duration(seconds: 3),
-                                          content: Text(
-                                              'Data Keluarga Deleted (untuk sekarang fungsi delete dan update tidak bisa pada server)')));
-                                },
-                                background: Container(
-                                  color: AppColors.buttonIconColor,
-                                ),
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
                                 child: Card(
                                   color: AppColors.cardcolor,
                                   shape: RoundedRectangleBorder(
@@ -167,13 +129,28 @@ class infoKeluarga extends StatelessWidget {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 Expanded(
-                                                    child: Text('Nama ' +
-                                                        keluargaList[index]
-                                                            ['jenis'])),
+                                                    child: Row(
+                                                  children: [
+                                                    Text('Nama '),
+                                                    Text(keluargaList[index]
+                                                                ["jenis"]
+                                                            .toString()
+                                                            .contains("null")
+                                                        ? ''
+                                                        : keluargaList[index]
+                                                                ["jenis"]
+                                                            .toString()),
+                                                  ],
+                                                )),
                                                 Expanded(
-                                                    child: Text(
-                                                        keluargaList[index]
-                                                            ['nama'])),
+                                                    child: Text(keluargaList[
+                                                                index]['nama']
+                                                            .toString()
+                                                            .contains("null")
+                                                        ? ''
+                                                        : keluargaList[index]
+                                                                ['nama']
+                                                            .toString())),
                                               ],
                                             ),
                                           ),
@@ -195,9 +172,14 @@ class infoKeluarga extends StatelessWidget {
                                                 const Expanded(
                                                     child: Text('Usia')),
                                                 Expanded(
-                                                    child: Text(
-                                                        keluargaList[index]
-                                                            ['usia'])),
+                                                    child: Text(keluargaList[
+                                                                        index]
+                                                                    ['usia']
+                                                                .toString() !=
+                                                            'null'
+                                                        ? keluargaList[index]
+                                                            ['usia']
+                                                        : '')),
                                               ],
                                             ),
                                           ),
@@ -220,9 +202,14 @@ class infoKeluarga extends StatelessWidget {
                                                     child: Text(
                                                         'Riwayat penyakit')),
                                                 Expanded(
-                                                    child: Text(
-                                                        keluargaList[index]
-                                                            ['riwayat'])),
+                                                    child: Text(keluargaList[
+                                                                        index]
+                                                                    ['riwayat']
+                                                                .toString() !=
+                                                            'null'
+                                                        ? keluargaList[index]
+                                                            ['riwayat']
+                                                        : '')),
                                               ],
                                             ),
                                           ),

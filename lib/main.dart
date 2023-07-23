@@ -1,14 +1,24 @@
 import 'dart:io';
 
+import 'package:alarm/alarm.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tbc_app/bloc/bloc/bloc/edukasi_bloc.dart';
+import 'package:tbc_app/bloc/bloc/bloc/efek_bloc.dart';
 import 'package:tbc_app/data/Models/alarm/alarm_hive_storage.dart';
+import 'package:tbc_app/data/Models/alarm/efek_hive_storage.dart';
+import 'package:tbc_app/data/Models/alarm/pengambilan_hive_storage.dart';
 import 'package:tbc_app/data/Models/alarm/periksa_hive_storage.dart';
 import 'package:tbc_app/provider/alarm_provider.dart';
+import 'package:tbc_app/provider/efek_provider.dart';
+import 'package:tbc_app/provider/pengambilan_provider.dart';
 import 'package:tbc_app/provider/periksa_provider.dart';
 import 'package:timezone/data/latest_all.dart';
 import 'package:timezone/timezone.dart';
@@ -21,11 +31,17 @@ import 'package:tbc_app/routes/routers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await Alarm.init(showDebugLogs: true);
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -55,42 +71,35 @@ class _MyAppState extends State<MyApp> {
 
   void _setUpLocalNotification() async {
     await _configureLocalTimeZone();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+    AndroidInitializationSettings initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
 
     /// Note: permissions aren't requested here just to demonstrate that can be
     /// done later
-    final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
-            requestAlertPermission: true,
-            requestBadgePermission: true,
-            requestSoundPermission: true,
-            onDidReceiveLocalNotification: (
-              int id,
-              String? title,
-              String? body,
-              String? payload,
-            ) async {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(title ?? ''),
-                  content: Text(body ?? ''),
-                ),
-              );
-            });
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification: (
+          int id,
+          String? title,
+          String? body,
+          String? payload,
+        ) async {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(title ?? ''),
+              content: Text(body ?? ''),
+            ),
+          );
+        });
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String? payload) async {
-      if (payload != null) {
-        debugPrint('notification payload: $payload');
-      }
-    });
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) async {});
   }
 
   Future<void> _configureLocalTimeZone() async {
@@ -116,6 +125,12 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (context) => KeluargaBloc(DioClient()),
         ),
+        BlocProvider(
+          create: (context) => EfekBloc(DioClient()),
+        ),
+        BlocProvider(
+          create: (context) => EdukasiBloc(DioClient()),
+        ),
         ChangeNotifierProvider(
           create: (context) => AlarmModel(
             const AlarmsHiveLocalStorage(),
@@ -125,13 +140,24 @@ class _MyAppState extends State<MyApp> {
           create: (context) => PeriksaModel(
             const PeriksaHiveLocalStorage(),
           ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PengambilanModel(
+            const PengambilanHiveLocalStorage(),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => EfekModel(
+            const EfekHiveLocalStorage(),
+          ),
         )
       ],
       child: BlocListener<UserBloc, UserState>(
         listener: (context, state) {
           if (state is UserSignedIn) {
             router.replaceNamed('home');
-          } else if (state is UserSignedOut) {
+          }
+          if (state is UserSignedOut) {
             router.replaceNamed('login');
           }
         },

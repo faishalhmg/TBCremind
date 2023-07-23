@@ -15,6 +15,12 @@ class AlarmsHiveLocalStorage {
     await Hive.openBox(_kAlarmsHiveBoxName);
   }
 
+  isExists() async {
+    final openBox = await Hive.openBox(_kAlarmsHiveBoxName);
+    int length = openBox.length;
+    return length;
+  }
+
   Future<List<AlarmDataModel>> loadAlarms() async {
     final box = Hive.box(_kAlarmsHiveBoxName);
 
